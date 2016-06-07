@@ -2,7 +2,7 @@ package main
 
 import (
   "fmt"
-  "bufio"
+  // "bufio"
   "log"
   "os/exec"
   // "net/http"
@@ -33,16 +33,23 @@ func main() {
         log.Println("read:", err)
         return
       }
-      fmt.Println("executing", string(command))
       f.Write(command)
     }
   }()
 
 
-  scanner := bufio.NewScanner(f)
-  for scanner.Scan() {
-    data := scanner.Bytes()
-    // fmt.Println(">>", data, "<<")
-    c.WriteMessage(websocket.TextMessage, data)
+  // scanner := bufio.NewScanner(f)
+  // for scanner.Scan() {
+  //   data := scanner.Bytes()
+  //   // fmt.Println(">>", data, "<<")
+  //   c.WriteMessage(websocket.TextMessage, data)
+  // }
+  buf := make([]byte, 1024)
+  for {
+    size, err := f.Read(buf)
+    if err != nil {
+      fmt.Println("error", err)
+    }
+    c.WriteMessage(websocket.TextMessage, buf[:size])
   }
 }
